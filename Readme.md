@@ -1,7 +1,43 @@
-This is Basal, a group of cells thought of it, (I think its bad)
-This is made by a group of three induviduals (bunch-of-cells, Snm-Logic, Mochii)
+# Basal
 
-The goal of this is a mid level easy to code language, compiling to fast C code, of course, feel free to add issues and pull requests in their respective areas, 
-We look forward to feedback! 
+#### A general purpose low level programming language written in Python. Basal is the easiest low level programming language. It has a really easy syntax which is very similar to Python, Rust etc.
 
-~Mochii
+# Contributors
+
+- ### SnmLogic
+- ### Bunch-Of-Cells
+- ### Mochii (DetectiveCatt)
+
+# Syntax
+
+## Variables
+
+```
+let a = 20
+```
+
+## Functions
+
+```
+func a(nane, age) {
+  // do something here
+}
+```
+
+## For loop
+
+```
+for i in 10..200{
+  out(i)
+}
+```
+
+## While loop
+
+```
+while true{
+  out("I am stuck here, save me !!!")
+}
+```
+
+### Note: The syntax is not fixed and may change in the future.
