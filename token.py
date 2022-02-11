@@ -13,7 +13,12 @@ def position(function):
         
     return new
 
-
+class Operator(Token):
+    @position
+    def __init__(self, operator: str):
+        self.operator= operator
+    def __repr__(self) -> str:
+        return f"Operator : '{self.operator}'"
 class Identifier(Token):
     @position
     def __init__(self, ident: str):
