@@ -2,9 +2,10 @@
 The Lexer
 """
 
+from ast import operator
 from error import IllegalCharError, Position
 from peekable import Peekable
-from token import Identifier
+from token import Identifier, Operator
 
 
 def lex(contents: str, filename: str) -> list:
@@ -26,6 +27,8 @@ def lex(contents: str, filename: str) -> list:
                 last_line = char[0] + 1
             case ' ' | '\t' | '\r':
                 pass
+            case '=' | '>' | '<' | '==' | '*' | '^' | '/':
+                tokens.append(Operator(Position(line, start, end, filename), char[1]))
             case c if c.isalnum():
                 word = c
                 start = i
