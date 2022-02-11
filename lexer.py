@@ -7,7 +7,7 @@ from peekable import Peekable
 from token import Identifier
 
 
-def lex(contents: str) -> list:
+def lex(contents: str, filename: str) -> list:
     """
     Lexes the contents of a file.
     """
@@ -37,8 +37,8 @@ def lex(contents: str) -> list:
                     word += char[1]
                     chars.__next__()
                 end -= last_line
-                tokens.append(Identifier(Position(line, start, end), word))
-            case _:
-                raise IllegalCharError
+                tokens.append(Identifier(Position(line, start, end, filename), word))
+            case c:
+                raise IllegalCharError(Position(line, i, char[0] + 2, filename), c)
 
     return tokens
