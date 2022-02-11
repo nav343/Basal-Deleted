@@ -1,12 +1,12 @@
 # Basal
 
-#### A general purpose low level programming language written in Python. Basal is the easiest low level programming language. It has a really easy syntax which is very similar to Python, Rust etc.
+#### A general purpose low level programming language written in Python. Basal is an easy mid level programming language compiling to C. It has an easy syntax, similar to Python, Rust etc.
 
 # Contributors
 
-- ### SnmLogic
-- ### Bunch-Of-Cells
-- ### Mochii (DetectiveCatt)
+- ### SnmLogic (suggested the idea and now we're doing it)
+- ### Bunch-Of-Cells (The guy who decided the bad (obviously) name, I mean it sounds like Nasal!)
+- ### Mochii (DetectiveCatt, random dude who is in love with cats, weirdo)
 
 # Syntax
 
@@ -19,7 +19,7 @@ let a = 20
 ## Functions
 
 ```
-func a(nane, age) {
+func a(xyz) {
   // do something here
 }
 ```
@@ -36,8 +36,9 @@ for i in 10..200{
 
 ```
 while true{
-  out("I am stuck here, save me !!!")
+  out("this gonna go forevaaaaaaaaaa")
 }
 ```
 
 ### Note: The syntax is not fixed and may change in the future.
+~Mochii
