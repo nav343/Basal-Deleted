@@ -19,7 +19,7 @@ let a = 20
 ## Functions
 
 ```
-func a(xyz) {
+func a(xyz: int32) {
   // do something here
 }
 ```
@@ -27,7 +27,7 @@ func a(xyz) {
 ## For loop
 
 ```
-for i in 10..200{
+for i in range(1, 21) {
   out(i)
 }
 ```
@@ -35,7 +35,7 @@ for i in 10..200{
 ## While loop
 
 ```
-while true{
+while 1 {
   out("this gonna go forevaaaaaaaaaa")
 }
 ```
