@@ -1,21 +1,16 @@
-from typing import Protocol
+from typing import Generic, TypeVar, Iterable
 
-class Iterator(Protocol):
-    def __iter__(self):
-        ...
-        
-    def __next__(self):
-        ...
+T = TypeVar('T')
 
-class Peekable:
-    def __init__(self, iterator: Iterator):
-        self.next = next(iterator, None)
+class Peekable(Generic[T]):
+    def __init__(self, iterator: Iterable[T]):
+        self.next: T | None = next(iterator, None)
         self.iterator = iterator
 
     def __iter__(self):
         self
 
-    def __next__(self):
+    def __next__(self) -> T:
         if self.next is None:
             raise StopIteration
         res = self.next

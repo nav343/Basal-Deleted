@@ -24,3 +24,10 @@ class IllegalCharError(Error):
     def __init__(self, char: str):
         self.details = f"Illegal character '{char}'"
 
+class NumberLexError(Error):
+    __slots__ = "char"
+
+    @position
+    def __init__(self, char: str):
+        self.details = f"Unknown character found while lexing a number: '{char}'"
+
