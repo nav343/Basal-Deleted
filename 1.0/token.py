@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from error import Position
-    
+
 KEYWORDS = ("let", "if", "while", "for", "else", "func", "return")
 
 def position(function):
@@ -34,7 +34,7 @@ class Identifier(Token):
         self.ident = ident
         
     def __repr__(self) -> str:
-        return f"'{self.ident}'"
+        return f"Identifier: '{self.ident}'"
 
 class Plus(Token): 
     __slots__ = ()
@@ -84,7 +84,7 @@ class Keyword(Token):
         self.keyword = keyword
 
     def __repr__(self) -> str:
-        return f"'{self.keyword}'"
+        return f"Keyword: '{self.keyword}'"
 
 class EOF(Token):
     __slots__ = ()
@@ -127,3 +127,191 @@ class MinusAssign(Token):
 
     def __repr__(self) -> str:
         return "-="
+
+class NotEqual(Token):
+    __slots__ = ()
+
+    def __repr__(self) -> str:
+        return "!="
+
+class Not(Token):
+    __slots__ = ()
+
+    def __repr__(self) -> str:
+        return "!"
+
+class Multiply(Token):
+    __slots__ = ()
+    
+    def __repr__(self) -> str:
+        return "*"
+
+class MultiplyAssign(Token):
+    __slots__ = ()
+    
+    def __repr__(self) -> str:
+        return "*="
+
+class Divide(Token):
+    __slots__ = ()
+    
+    def __repr__(self) -> str:
+        return "/"
+
+class DivideAssign(Token):
+    __slots__ = ()
+    
+    def __repr__(self) -> str:
+        return "/="
+    
+class Mod(Token):
+    __slots__ = ()
+    
+    def __repr__(self) -> str:
+        return "%"
+
+class ModAssign(Token):
+    __slots__ = ()
+    
+    def __repr__(self) -> str:
+        return "%="
+    
+class Or(Token):
+    __slots__ = ()
+    
+    def __repr__(self) -> str:
+        return "|"
+
+class OrAssign(Token):
+    __slots__ = ()
+    
+    def __repr__(self) -> str:
+        return "|="
+    
+class And(Token):
+    __slots__ = ()
+    
+    def __repr__(self) -> str:
+        return "&"
+
+class AndAssign(Token):
+    __slots__ = ()
+    
+    def __repr__(self) -> str:
+        return "&="
+    
+class Xor(Token):
+    __slots__ = ()
+    
+    def __repr__(self) -> str:
+        return "^"
+
+class XorAssign(Token):
+    __slots__ = ()
+    
+    def __repr__(self) -> str:
+        return "^="
+    
+class Power(Token):
+    __slots__ = ()
+    
+    def __repr__(self) -> str:
+        return "**"
+
+class PowerAssign(Token):
+    __slots__ = ()
+    
+    def __repr__(self) -> str:
+        return "**="
+
+class Colon(Token):
+    __slots__ = ()
+    
+    def __repr__(self) -> str:
+        return ":"
+
+class Comma(Token):
+    __slots__ = ()
+    
+    def __repr__(self) -> str:
+        return ","
+
+class RParen(Token):
+    __slots__ = ()
+    
+    def __repr__(self) -> str:
+        return ")"
+
+class LParen(Token):
+    __slots__ = ()
+    
+    def __repr__(self) -> str:
+        return "("
+
+class RSquare(Token):
+    __slots__ = ()
+    
+    def __repr__(self) -> str:
+        return "]"
+
+class LSquare(Token):
+    __slots__ = ()
+    
+    def __repr__(self) -> str:
+        return "["
+
+class RCurly(Token):
+    __slots__ = ()
+    
+    def __repr__(self) -> str:
+        return "}"
+
+class LCurly(Token):
+    __slots__ = ()
+    
+    def __repr__(self) -> str:
+        return "{"
+
+class Char(Token):
+    __slots__ = "char"
+    
+    @position
+    def __init__(self, char: str):
+        self.char = char
+    
+    def __repr__(self) -> str:
+        return f"Char: '{self.char!r}'"
+
+class Question(Token):
+    __slots__ = ()
+    
+    def __repr__(self) -> str:
+        return "?"
+
+class Dot(Token):
+    __slots__ = ()
+    
+    def __repr__(self) -> str:
+        return "."
+
+class Arrow(Token):
+    __slots__ = ()
+    
+    def __repr__(self) -> str:
+        return "->"
+
+class FatArrow(Token):
+    __slots__ = ()
+    
+    def __repr__(self) -> str:
+        return "=>"
+
+class String(Token):
+    __slots__ = "string"
+
+    @position
+    def __init__(self, string: str):
+        self.string = string
+        
+    def __repr__(self) -> str:
+        return f"\"{self.string!r}\""

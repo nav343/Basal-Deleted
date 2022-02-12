@@ -2,8 +2,8 @@
 The Lexer
 """
 
-from error import IllegalCharError, Position, NumberLexError
 from peekable import Peekable
+from error import *
 from token import *
 
 
@@ -11,7 +11,6 @@ def lex(contents: str, filename: str) -> list[Token]:
     """
     Lexes the contents of a file.
     """
-    parentheses = []
     tokens = []
     line = 1
     last_line = 0
@@ -27,6 +26,39 @@ def lex(contents: str, filename: str) -> list[Token]:
                 last_line = j + 1
             case ' ' | '\t' | '\r':
                 pass
+            case '\'':
+                k = i
+                match next(chars, None):
+                    case (_, '\''):
+                        raise CharLexError(Position(line, i, k+2, filename), "Expected char literal, found '")
+                    case (_, '\\'):
+                        k += 1
+                        match next(chars, None):
+                            case (_, 'n'):
+                                c = '\n'
+                            case (_, 't'):
+                                c = '\t'
+                            case (_, '\\'):
+                                c = '\\'
+                            case (_, '\''):
+                                c = '\''
+                            case (_, '0'):
+                                c = '\0'
+                            case (_, 'r'):
+                                c = '\r'
+                            case None:
+                                raise CharLexError(Position(line, i, i+3, filename), "Expected char literal after \\")
+                            case (_, c):
+                                raise CharLexError(Position(line, i, i+3, filename), f"Invalid escape sequence: \{c}")
+                    case (_, a):
+                        c = a
+                match next(chars, None):
+                    case None:
+                        raise CharLexError(Position(line, i, k+3, filename), f"Unclosed Char Literal")
+                    case (_, '\''):
+                        tokens.append(Char(Position(line, i, k+3, filename), c))
+                    case (_, c):
+                        raise CharLexError(Position(line, i, k+3, filename), f"Expected ', found {c}")
             case '+':
                 match chars.peek():
                     case (_, '='):
@@ -34,6 +66,74 @@ def lex(contents: str, filename: str) -> list[Token]:
                         tokens.append(PlusAssign(Position(line, i, i + 3, filename)))
                     case _:
                         tokens.append(Plus(Position(line, i, i + 2, filename)))
+            case '&':
+                match chars.peek():
+                    case (_, '='):
+                        next(chars)
+                        tokens.append(AndAssign(Position(line, i, i + 3, filename)))
+                    case _:
+                        tokens.append(And(Position(line, i, i + 2, filename)))
+            case '|':
+                match chars.peek():
+                    case (_, '='):
+                        next(chars)
+                        tokens.append(OrAssign(Position(line, i, i + 3, filename)))
+                    case _:
+                        tokens.append(Or(Position(line, i, i + 2, filename)))
+            case '^':
+                match chars.peek():
+                    case (_, '='):
+                        next(chars)
+                        tokens.append(XorAssign(Position(line, i, i + 3, filename)))
+                    case _:
+                        tokens.append(Xor(Position(line, i, i + 2, filename)))
+            case '/':
+                match chars.peek():
+                    case (_, '='):
+                        next(chars)
+                        tokens.append(DivideAssign(Position(line, i, i + 3, filename)))
+                    case (_, '/'):
+                        for i, c in chars:
+                            if c == '\n':
+                                line += 1
+                                last_line = i + 1
+                                break
+                    case (_, '*'):
+                        next(chars)
+                        while (char := next(chars, None)):
+                            (i, c) = char
+                            if c == '*' and (c := next(chars, None)):
+                                if c[1] == '/':
+                                    break
+                            elif c == '\n':
+                                line += 1
+                                last_line = i + 1
+                        else:
+                            raise UnterminatedCommentError(Position(line, i, i + 1, filename))
+                    case _:
+                        tokens.append(Divide(Position(line, i, i + 2, filename)))
+            case '*':
+                match chars.peek():
+                    case (_, '='):
+                        next(chars)
+                        tokens.append(MultiplyAssign(Position(line, i, i + 3, filename)))
+                    case (_, '*'):
+                        next(chars)
+                        match chars.peek():
+                            case (_, '='):
+                                next(chars)
+                                tokens.append(PowerAssign(Position(line, i, i + 4, filename)))
+                            case _:
+                                tokens.append(Power(Position(line, i, i + 3, filename)))
+                    case _:
+                        tokens.append(Multiply(Position(line, i, i + 2, filename)))
+            case '%':
+                match chars.peek():
+                    case (_, '='):
+                        next(chars)
+                        tokens.append(ModAssign(Position(line, i, i + 3, filename)))
+                    case _:
+                        tokens.append(Mod(Position(line, i, i + 2, filename)))
             case '<':
                 match chars.peek():
                     case (_, '='):
@@ -53,6 +153,9 @@ def lex(contents: str, filename: str) -> list[Token]:
                     case (_, '='):
                         next(chars)
                         tokens.append(MinusAssign(Position(line, i, i + 3, filename)))
+                    case (_, '>'):
+                        next(chars)
+                        tokens.append(Arrow(Position(line, i, i + 3, filename)))
                     case _:
                         tokens.append(Minus(Position(line, i, i + 2, filename)))
             case '=':
@@ -60,10 +163,76 @@ def lex(contents: str, filename: str) -> list[Token]:
                     case (_, '='):
                         next(chars)
                         tokens.append(Equals(Position(line, i, i + 3, filename)))
+                    case (_, '>'):
+                        next(chars)
+                        tokens.append(FatArrow(Position(line, i, i + 3, filename)))
                     case _:
                         tokens.append(Assign(Position(line, i, i + 2, filename)))
+            case '!':
+                match chars.peek():
+                    case (_, '='):
+                        next(chars)
+                        tokens.append(NotEqual(Position(line, i, i + 3, filename)))
+                    case _:
+                        tokens.append(Not(Position(line, i, i + 2, filename)))
             case ';':
                 tokens.append(SemiColon(Position(line, i, i + 2, filename)))
+            case ',':
+                tokens.append(Comma(Position(line, i, i + 2, filename)))
+            case ':':
+                tokens.append(Colon(Position(line, i, i + 2, filename)))
+            case '[':
+                tokens.append(LSquare(Position(line, i, i + 2, filename)))
+            case ']':
+                tokens.append(RSquare(Position(line, i, i + 2, filename)))
+            case '(':
+                tokens.append(LParen(Position(line, i, i + 2, filename)))
+            case ')':
+                tokens.append(RParen(Position(line, i, i + 2, filename)))
+            case '{':
+                tokens.append(LCurly(Position(line, i, i + 2, filename)))
+            case '}':
+                tokens.append(RCurly(Position(line, i, i + 2, filename)))
+            case '?':
+                tokens.append(Question(Position(line, i, i + 2, filename)))
+            case '.':
+                tokens.append(Dot(Position(line, i, i + 2, filename)))
+            case '"':
+                word = ""
+                start = i
+                end = j + 2
+                escape = False
+                for i, c in chars:
+                    if escape:
+                        match c:
+                            case 'n':
+                                word += '\n'
+                            case 't':
+                                word += '\t'
+                            case 'r':
+                                word += '\r'
+                            case '"':
+                                word += '"'
+                            case '\\':
+                                word += '\\'
+                            case c:
+                                raise StringLexError(Position(line, i, i + 3, filename), "Invalid escape sequence: \{c}")
+                        escape = False
+                    elif c == '"':
+                        end = i + 2
+                        break
+                    elif c == '\n':
+                        line += 1
+                        last_line = i + 1
+                        word += c
+                    elif c == '\\':
+                        escape = True
+                    else:
+                        word += c
+                else:
+                    raise StringLexError(Position(line, i, i + 1, filename), "Unclosed String Literal")
+                end -= last_line
+                tokens.append(String(Position(line, start, end, filename), word))
             case number if number.isnumeric():
                 start = i
                 end = j + 2
