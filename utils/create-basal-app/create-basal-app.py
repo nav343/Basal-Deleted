@@ -4,12 +4,9 @@ from colorama import Fore, Style
 import argparse
 import os
 
-parser = argparse.ArgumentParser(
-    description='A CLI program to create your Basal project.')
-parser.add_argument('project_name', type=str,
-                    help="Enter a name for your project.")
+parser = argparse.ArgumentParser(description='A CLI program to create your Basal project.')
+parser.add_argument('project_name', type=str, help="Enter a name for your project.")
 args = parser.parse_args()
-
 
 try:
     console = Console()
@@ -17,9 +14,7 @@ try:
     tasks = [f"Task {n}." for n in range(1, 11)]
     os.system("mkdir src")
     with open(f'src/{args.project_name}.basl', 'w') as f:
-        f.write('''
-    out("Hello World")
-    ''')
+        f.write("out(\"Hello World\")")
     with open('init.json', 'w') as f:
         author = input("Author: ")
         description = input("Description: ")

@@ -7,8 +7,6 @@ from utils.token import *
 from utils.error import *
 
 
-
-
 def lex(contents: str, filename: str) -> list[Token]:
     """
     Lexes the contents of a file.

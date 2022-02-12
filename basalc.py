@@ -1,16 +1,13 @@
 """
 The main file
 """
-#import lexer
+
 from core.lexer import lex
-#import parser
 from core.parser import parse
 
-#open text file
-file = open("file.txt", 'r')
-filedata = file.read()
-file.close()
 
+with open("file.txt", 'r') as file:
+    filedata = file.read()
 
 tokens = lex(filedata, "file")
 print(tokens)
