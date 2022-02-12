@@ -42,7 +42,6 @@ def parse(Tokens):
                             print("Variable cannot be int")
                             raise(SyntaxError)
                             break
-                        print(Tokens[token_number + end_of_params + 1])
                         node = VarNode(Tokens[token_number + 1], Tokens[token_number + 3], token_number, line_number)
                         code.append(node)
 
@@ -66,7 +65,6 @@ def parse(Tokens):
         if isinstance(token, Identifier) and token.ident == "out":
             node = OutNode(Tokens[token_number + 2], token_number, line_number)
         
-        if isinstance(token, EOF):
-            line_number += 1
+        
         token_number += 1
     return ast
