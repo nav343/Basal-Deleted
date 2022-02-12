@@ -69,7 +69,7 @@ def lex(contents: str, filename: str) -> list[Token]:
                 end = j + 2
                 while (char := chars.peek()):
                     if not char[1].isnumeric():
-                        if not char[1].isspace():
+                        if char[1].isalpha():
                             raise NumberLexError(Position(line, i, i + 2, filename), char[1])
                         break
                     end = char[0] + 2
