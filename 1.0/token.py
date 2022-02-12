@@ -84,7 +84,7 @@ class Keyword(Token):
         self.keyword = keyword
 
     def __repr__(self) -> str:
-        return f"Keyword = '{self.keyword}'"
+        return f"Keyword: '{self.keyword}'"
 
 class EOF(Token):
     __slots__ = ()
@@ -271,3 +271,37 @@ class LCurly(Token):
     
     def __repr__(self) -> str:
         return "{"
+
+class Char(Token):
+    __slots__ = "char"
+    
+    @position
+    def __init__(self, char: str):
+        self.char = char
+    
+    def __repr__(self) -> str:
+        return f"Char: '{self.char}'"
+
+class Question(Token):
+    __slots__ = ()
+    
+    def __repr__(self) -> str:
+        return "?"
+
+class Dot(Token):
+    __slots__ = ()
+    
+    def __repr__(self) -> str:
+        return "."
+
+class Arrow(Token):
+    __slots__ = ()
+    
+    def __repr__(self) -> str:
+        return "->"
+
+class FatArrow(Token):
+    __slots__ = ()
+    
+    def __repr__(self) -> str:
+        return "=>"

@@ -8,7 +8,7 @@ class Peekable(Generic[T]):
         self.iterator = iterator
 
     def __iter__(self):
-        self
+        return self
 
     def __next__(self) -> T:
         if self.next is None:

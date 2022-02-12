@@ -31,3 +31,14 @@ class NumberLexError(Error):
     def __init__(self, char: str):
         self.details = f"Unknown character found while lexing a number: '{char}'"
 
+class UnterminatedCommentError(Error):
+    __slots__ = ()
+
+    @position
+    def __init__(self):
+        self.details = "Unterminated Comment"
+
+class CharLexError(Error):
+    @position
+    def __init__(self, details: str):
+        self.details = details
