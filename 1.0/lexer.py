@@ -197,6 +197,42 @@ def lex(contents: str, filename: str) -> list[Token]:
                 tokens.append(Question(Position(line, i, i + 2, filename)))
             case '.':
                 tokens.append(Dot(Position(line, i, i + 2, filename)))
+            case '"':
+                word = ""
+                start = i
+                end = j + 2
+                escape = False
+                for i, c in chars:
+                    if escape:
+                        match c:
+                            case 'n':
+                                word += '\n'
+                            case 't':
+                                word += '\t'
+                            case 'r':
+                                word += '\r'
+                            case '"':
+                                word += '"'
+                            case '\\':
+                                word += '\\'
+                            case c:
+                                raise StringLexError(Position(line, i, i + 3, filename), "Invalid escape sequence: \{c}")
+                        escape = False
+                    elif c == '"':
+                        end = i + 2
+                        break
+                    elif c == '\n':
+                        line += 1
+                        last_line = i + 1
+                        word += c
+                    elif c == '\\':
+                        escape = True
+                    else:
+                        word += c
+                else:
+                    raise StringLexError(Position(line, i, i + 1, filename), "Unclosed String Literal")
+                end -= last_line
+                tokens.append(String(Position(line, start, end, filename), word))
             case number if number.isnumeric():
                 start = i
                 end = j + 2

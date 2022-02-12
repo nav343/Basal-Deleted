@@ -280,7 +280,7 @@ class Char(Token):
         self.char = char
     
     def __repr__(self) -> str:
-        return f"Char: '{self.char}'"
+        return f"Char: '{self.char!r}'"
 
 class Question(Token):
     __slots__ = ()
@@ -305,3 +305,13 @@ class FatArrow(Token):
     
     def __repr__(self) -> str:
         return "=>"
+
+class String(Token):
+    __slots__ = "string"
+
+    @position
+    def __init__(self, string: str):
+        self.string = string
+        
+    def __repr__(self) -> str:
+        return f"\"{self.string!r}\""
