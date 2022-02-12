@@ -11,7 +11,6 @@ def lex(contents: str, filename: str) -> list[Token]:
     """
     Lexes the contents of a file.
     """
-    parentheses = []
     tokens = []
     line = 1
     last_line = 0
@@ -24,7 +23,7 @@ def lex(contents: str, filename: str) -> list[Token]:
         match char:
             case '\n':
                 line += 1
-                last_line = char[0] + 1
+                last_line = j + 1
             case ' ' | '\t' | '\r':
                 pass
             case '+':
@@ -34,6 +33,56 @@ def lex(contents: str, filename: str) -> list[Token]:
                         tokens.append(PlusAssign(Position(line, i, i + 3, filename)))
                     case _:
                         tokens.append(Plus(Position(line, i, i + 2, filename)))
+            case '&':
+                match chars.peek():
+                    case (_, '='):
+                        next(chars)
+                        tokens.append(AndAssign(Position(line, i, i + 3, filename)))
+                    case _:
+                        tokens.append(And(Position(line, i, i + 2, filename)))
+            case '|':
+                match chars.peek():
+                    case (_, '='):
+                        next(chars)
+                        tokens.append(OrAssign(Position(line, i, i + 3, filename)))
+                    case _:
+                        tokens.append(Or(Position(line, i, i + 2, filename)))
+            case '^':
+                match chars.peek():
+                    case (_, '='):
+                        next(chars)
+                        tokens.append(XorAssign(Position(line, i, i + 3, filename)))
+                    case _:
+                        tokens.append(Xor(Position(line, i, i + 2, filename)))
+            case '/':
+                match chars.peek():
+                    case (_, '='):
+                        next(chars)
+                        tokens.append(DivideAssign(Position(line, i, i + 3, filename)))
+                    case _:
+                        tokens.append(Divide(Position(line, i, i + 2, filename)))
+            case '*':
+                match chars.peek():
+                    case (_, '='):
+                        next(chars)
+                        tokens.append(MultiplyAssign(Position(line, i, i + 3, filename)))
+                    case (_, '*'):
+                        next(chars)
+                        match chars.peek():
+                            case (_, '='):
+                                next(chars)
+                                tokens.append(PowerAssign(Position(line, i, i + 4, filename)))
+                            case _:
+                                tokens.append(Power(Position(line, i, i + 3, filename)))
+                    case _:
+                        tokens.append(Multiply(Position(line, i, i + 2, filename)))
+            case '%':
+                match chars.peek():
+                    case (_, '='):
+                        next(chars)
+                        tokens.append(ModAssign(Position(line, i, i + 3, filename)))
+                    case _:
+                        tokens.append(Mod(Position(line, i, i + 2, filename)))
             case '<':
                 match chars.peek():
                     case (_, '='):
@@ -62,8 +111,31 @@ def lex(contents: str, filename: str) -> list[Token]:
                         tokens.append(Equals(Position(line, i, i + 3, filename)))
                     case _:
                         tokens.append(Assign(Position(line, i, i + 2, filename)))
+            case '!':
+                match chars.peek():
+                    case (_, '='):
+                        next(chars)
+                        tokens.append(NotEqual(Position(line, i, i + 3, filename)))
+                    case _:
+                        tokens.append(Not(Position(line, i, i + 2, filename)))
             case ';':
                 tokens.append(SemiColon(Position(line, i, i + 2, filename)))
+            case ',':
+                tokens.append(Comma(Position(line, i, i + 2, filename)))
+            case ':':
+                tokens.append(Colon(Position(line, i, i + 2, filename)))
+            case '[':
+                tokens.append(LSquare(Position(line, i, i + 2, filename)))
+            case ']':
+                tokens.append(RSquare(Position(line, i, i + 2, filename)))
+            case '(':
+                tokens.append(LParen(Position(line, i, i + 2, filename)))
+            case ')':
+                tokens.append(RParen(Position(line, i, i + 2, filename)))
+            case '{':
+                tokens.append(LCurly(Position(line, i, i + 2, filename)))
+            case '}':
+                tokens.append(RCurly(Position(line, i, i + 2, filename)))
             case number if number.isnumeric():
                 start = i
                 end = j + 2
