@@ -242,8 +242,13 @@ def lex(contents: str, filename: str) -> list[Token]:
             case number if number.isnumeric():
                 start = i
                 end = j + 2
+                dot = False
                 while (char := chars.peek()):
-                    if not char[1].isnumeric():
+                    if char[1] == '.':
+                        if dot:
+                            raise NumberLexError(Position(line, i, i + 2, filename), char[1])
+                        dot = True
+                    elif not char[1].isnumeric():
                         if char[1].isalpha():
                             raise NumberLexError(Position(line, i, i + 2, filename), char[1])
                         break
@@ -251,7 +256,10 @@ def lex(contents: str, filename: str) -> list[Token]:
                     number += char[1]
                     next(chars)
                 end -= last_line
-                tokens.append(Number(Position(line, start, end, filename), int(number)))
+                if dot:
+                    tokens.append(Float(Position(line, start, end, filename), float(number)))
+                else:
+                    tokens.append(Number(Position(line, start, end, filename), int(number)))
             case word if word.isalpha() or word == '_':
                 start = i
                 end = j + 2

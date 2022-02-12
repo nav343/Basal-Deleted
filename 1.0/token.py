@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from error import Position
 
-KEYWORDS = ("let", "if", "while", "for", "else", "func", "return")
+KEYWORDS = ("let", "if", "while", "for", "else", "func", "return", "int8", "uint8", "int16", "uint16", "int32", "uint32", "float32", "float64", "char", "null")
 
 def position(function):
     def new(self, position : Position, *args, **kwargs):
@@ -74,7 +74,17 @@ class Number(Token):
         self.number = number
         
     def __repr__(self) -> str:
-        return f"{self.number}"
+        return f"Number: {self.number}"
+
+class Float(Token):
+    __slots__ = "float"
+    
+    @position
+    def __init__(self, number: int):
+        self.float = number
+        
+    def __repr__(self) -> str:
+        return f"Float: {self.float}"
 
 class Keyword(Token):
     __slots__ = "keyword"
