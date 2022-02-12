@@ -35,8 +35,21 @@ def parse(Tokens):
             ast["program"].append([node])
         if isinstance(token, Identifier) and token.ident == "out":
             node = OutNode(Tokens[token_number + 2], token_number, line_number)
-        if isinstance(token, Identifier) and token.ident == "func":
-            pass
+        if isinstance(token, Keyword) and token.keyword == "func":
+            params = []
+            nameof_func = Tokens[token_number + 1]
+            print(Tokens[token_number + 2])
+            if isinstance(token, LParen):
+                tmp = 3
+                
+                while True:
+                    print(Tokens[token_number + tmp])
+                    if not isinstance(token, RParen):
+                        params.append(Tokens[token_number + tmp])
+                    elif isinstance(token, RParen):
+                        break
+                    tmp += 1
+            print(params)
         if isinstance(token, EOF):
             line_number += 1
         token_number += 1

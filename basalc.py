@@ -13,5 +13,6 @@ file.close()
 
 
 tokens = lex(filedata, "file")
+print(tokens)
 ast = parse(tokens)
 print(ast)
