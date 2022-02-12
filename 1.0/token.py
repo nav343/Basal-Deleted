@@ -337,3 +337,45 @@ class Decrement(Token):
     
     def __repr__(self) -> str:
         return "--"
+
+class Hash(Token):
+    __slots__ = ()
+    
+    def __repr__(self) -> str:
+        return "#"
+
+class DoubleDot(Token):
+    __slots__ = ()
+    
+    def __repr__(self) -> str:
+        return ".."
+
+class Dollar(Token):
+    __slots__ = ()
+    
+    def __repr__(self) -> str:
+        return "$"
+
+class AtTheRate(Token):
+    __slots__ = ()
+    
+    def __repr__(self) -> str:
+        return "@"
+
+class BackTick(Token):
+    __slots__ = ()
+    
+    def __repr__(self) -> str:
+        return "`"
+
+class CurvedMinus(Token):
+    __slots__ = ()
+    
+    def __repr__(self) -> str:
+        return "~"
+
+class TripleDot(Token):
+    __slots__ = ()
+    
+    def __repr__(self) -> str:
+        return "..."

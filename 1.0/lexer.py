@@ -202,7 +202,33 @@ def lex(contents: str, filename: str) -> list[Token]:
             case '?':
                 tokens.append(Question(Position(line, i, i + 2, filename)))
             case '.':
-                tokens.append(Dot(Position(line, i, i + 2, filename)))
+                match chars.peek():
+                    case (_, '.'):
+                        next(chars)
+                        match chars.peek():
+                            case (_, '.'):
+                                next(chars)
+                                tokens.append(TripleDot(Position(line, i, i + 4, filename)))
+                            case _:
+                                tokens.append(DoubleDot(Position(line, i, i + 3, filename)))
+                    case _:
+                        tokens.append(Dot(Position(line, i, i + 2, filename)))
+            case '$':
+                tokens.append(Dollar(Position(line, i, i + 2, filename)))
+            case '#':
+                tokens.append(Hash(Position(line, i, i + 2, filename)))
+            case '@':
+                tokens.append(AtTheRate(Position(line, i, i + 2, filename)))
+            case '`':
+                tokens.append(BackTick(Position(line, i, i + 2, filename)))
+            case '~':
+                tokens.append(CurvedMinus(Position(line, i, i + 2, filename)))
+            case '\\':
+                match next(chars, None):
+                    case (_, _):
+                        pass
+                    case None:
+                        raise InvalidEscapeError(Position(line, i, i + 2, filename), "Expected a character to escape after \\")
             case '"':
                 word = ""
                 start = i

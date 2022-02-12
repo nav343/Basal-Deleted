@@ -47,3 +47,8 @@ class StringLexError(Error):
     @position
     def __init__(self, details: str):
         self.details = details
+
+class InvalidEscapeError(Error):
+    @position
+    def __init__(self, details: str):
+        self.details = details
