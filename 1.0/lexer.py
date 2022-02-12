@@ -64,6 +64,9 @@ def lex(contents: str, filename: str) -> list[Token]:
                     case (_, '='):
                         next(chars)
                         tokens.append(PlusAssign(Position(line, i, i + 3, filename)))
+                    case (_, '+'):
+                        next(chars)
+                        tokens.append(Increment(Position(line, i, i + 3, filename)))
                     case _:
                         tokens.append(Plus(Position(line, i, i + 2, filename)))
             case '&':
@@ -156,6 +159,9 @@ def lex(contents: str, filename: str) -> list[Token]:
                     case (_, '>'):
                         next(chars)
                         tokens.append(Arrow(Position(line, i, i + 3, filename)))
+                    case (_, '-'):
+                        next(chars)
+                        tokens.append(Decrement(Position(line, i, i + 3, filename)))
                     case _:
                         tokens.append(Minus(Position(line, i, i + 2, filename)))
             case '=':

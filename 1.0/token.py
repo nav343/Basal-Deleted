@@ -315,3 +315,15 @@ class String(Token):
         
     def __repr__(self) -> str:
         return f"\"{self.string!r}\""
+
+class Increment(Token):
+    __slots__ = ()
+    
+    def __repr__(self) -> str:
+        return "++"
+
+class Decrement(Token):
+    __slots__ = ()
+    
+    def __repr__(self) -> str:
+        return "--"
