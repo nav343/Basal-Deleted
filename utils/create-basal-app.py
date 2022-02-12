@@ -16,7 +16,7 @@ try:
     print(Fore.GREEN + "Creating project " + args.project_name)
     tasks = [f"Task {n}." for n in range(1, 11)]
     os.system("mkdir src")
-    with open(f'src/{args.project_name}.bsl', 'w') as f:
+    with open(f'src/{args.project_name}.basl', 'w') as f:
         f.write('''
     out("Hello World")
     ''')
