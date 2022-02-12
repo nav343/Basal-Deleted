@@ -1,7 +1,17 @@
 """
 The main file
 """
-
+#import lexer
 from core.lexer import lex
+#import parser
+from core.parser import parse
 
-print(lex("24 + 242 = 2424", "hi"))
+#open text file
+file = open("file.txt", 'r')
+filedata = file.read()
+file.close()
+
+
+tokens = lex(filedata, "file")
+ast = parse(tokens)
+print(ast)
