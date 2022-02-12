@@ -1,28 +1,39 @@
+from __future__ import annotations
+
 from abc import ABC, abstractmethod
+from typing import TYPE_CHECKING
 
-
-class Token(ABC):    
-    @abstractmethod
-    def __repr__(self) -> str:
-        ...
+if TYPE_CHECKING:
+    from error import Position
 
 def position(function):
-    def new(self, position, *args, **kwargs):
-        function(self, *args)
+    def new(self, position : Position, *args, **kwargs):
+        function(self, *args, **kwargs)
         self.position = position
         
     return new
 
-class Operator(Token):
+class Token(ABC): 
     @position
-    def __init__(self, operator: str):
-        self.operator= operator
+    def __init__(self):
+        pass
+   
+    @abstractmethod
     def __repr__(self) -> str:
-        return f"Operator : '{self.operator}'"
+        ...
+
 class Identifier(Token):
     @position
     def __init__(self, ident: str):
         self.ident = ident
         
     def __repr__(self) -> str:
-        return f"Identifier : '{self.ident}'"
+        return f"'{self.ident}'"
+
+class Plus(Token):    
+    def __repr__(self) -> str:
+        return "+"
+
+class EOF(Token):
+    def __repr__(self) -> str:
+        return "EOF"

@@ -1,24 +1,26 @@
-from abc import ABC, abstractclassmethod
+from abc import ABC
+from token import position
 
 class Error(Exception, ABC):
-    @abstractclassmethod
+    __slots__ = "position", "details"
+
     def __str__(self) -> str:
-        ...
+        return f"{self.__class__.__name__} in {self.position.file} at {self.position.line}:{self.position.start} to {self.position.line_end}:{self.position.end} :: {self.details}"
         
 class Position:
-    def __init__(self, line, start, end, file):
+    __slots__ = "line", "start", "end", "file", "line_end"
+    
+    def __init__(self, line: int, start: int, end: int, file: str):
         self.line = line
+        self.line_end = line
         self.start = start
         self.end = end
         self.file = file
 
 class IllegalCharError(Error):
-    def __init__(self, position: Position, char: str):
-        self.file = position.file
-        self.line = position.line
-        self.start = position.start
-        self.end = position.end
-        self.char = char
+    __slots__ = "char"
 
-    def __str__(self) -> str:
-        return f"Illegal character at {self.file}:{self.line}:{self.start}-{self.end} : {self.char}"
+    @position
+    def __init__(self, char: str):
+        self.details = f"Illegal character '{char}'"
+
