@@ -28,7 +28,7 @@ class IllegalCharError(Error):
         self.details = f"Illegal character '{char}'"
 
 
-class NumberLexError(Error):
+class NumberParseError(Error):
     __slots__ = "char"
 
     @position
@@ -44,13 +44,18 @@ class UnterminatedCommentError(Error):
         self.details = "Unterminated Comment"
 
 
-class CharLexError(Error):
+class CharParseError(Error):
     @position
     def __init__(self, details: str):
         self.details = details
 
 
-class StringLexError(Error):
+class StringParseError(Error):
+    @position
+    def __init__(self, details: str):
+        self.details = details
+
+class SyntaxError(Error):
     @position
     def __init__(self, details: str):
         self.details = details

@@ -30,7 +30,7 @@ def lex(contents: str, filename: str) -> list[Token]:
                 k = i
                 match next(chars, None):
                     case(_, '\''):
-                        raise CharLexError(
+                        raise CharParseError(
                             Position(line, i, k+2, filename), "Expected char literal, found '")
                     case(_, '\\'):
                         k += 1
@@ -48,22 +48,22 @@ def lex(contents: str, filename: str) -> list[Token]:
                             case(_, 'r'):
                                 c = '\r'
                             case None:
-                                raise CharLexError(
+                                raise CharParseError(
                                     Position(line, i, i+3, filename), "Expected char literal after \\")
                             case(_, c):
-                                raise CharLexError(
+                                raise CharParseError(
                                     Position(line, i, i+3, filename), f"Invalid escape sequence: \{c}")
                     case(_, a):
                         c = a
                 match next(chars, None):
                     case None:
-                        raise CharLexError(
+                        raise CharParseError(
                             Position(line, i, k+3, filename), f"Unclosed Char Literal")
                     case(_, '\''):
                         tokens.append(
                             Char(Position(line, i, k+3, filename), c))
                     case(_, c):
-                        raise CharLexError(
+                        raise CharParseError(
                             Position(line, i, k+3, filename), f"Expected ', found {c}")
             case '+':
                 match chars.peek():
@@ -253,7 +253,7 @@ def lex(contents: str, filename: str) -> list[Token]:
                             case '\\':
                                 word += '\\'
                             case c:
-                                raise StringLexError(
+                                raise StringParseError(
                                     Position(line, i, i + 3, filename), "Invalid escape sequence: \{c}")
                         escape = False
                     elif c == '"':
@@ -268,7 +268,7 @@ def lex(contents: str, filename: str) -> list[Token]:
                     else:
                         word += c
                 else:
-                    raise StringLexError(
+                    raise StringParseError(
                         Position(line, i, i + 1, filename), "Unclosed String Literal")
                 end -= last_line
                 tokens.append(
@@ -280,12 +280,12 @@ def lex(contents: str, filename: str) -> list[Token]:
                 while (char := chars.peek()):
                     if char[1] == '.':
                         if dot:
-                            raise NumberLexError(
+                            raise NumberParseError(
                                 Position(line, i, i + 2, filename), char[1])
                         dot = True
                     elif not char[1].isnumeric():
                         if char[1].isalpha():
-                            raise NumberLexError(
+                            raise NumberParseError(
                                 Position(line, i, i + 2, filename), char[1])
                         break
                     end = char[0] + 2

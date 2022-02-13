@@ -1,9 +1,8 @@
-class Node:
-    def __init__(self, content, token_number, line_number):
-        # self.name = name
-        self.content = content
-        self.column = token_number
-        self.line = line_number
+from abc import ABC
+
+
+class Node(ABC):
+    __slots__ = ()
 
 class VarNode(Node):
     def __init__(self, name, content, token_number, line_number):

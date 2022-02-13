@@ -1,5 +1,6 @@
 from utils.token import *
 from utils.node import *
+from utils.error import SyntaxError
 
 def parse(Tokens):
     token_number = 0
@@ -13,6 +14,7 @@ def parse(Tokens):
             params = []
             nameof_func = Tokens[token_number + 1].ident
             end_of_params = 0
+            code = []
             if isinstance(Tokens[token_number + 2], LParen):
                 tmp = 3
                 while True:
@@ -26,9 +28,7 @@ def parse(Tokens):
                         end_of_params = tmp
                         break
                     tmp += 1
-            code = []
             if isinstance(Tokens[token_number + end_of_params + 1], LCurly):
-                
                 tmp = 2
                 print(Tokens[token_number + tmp], "asdas")
                 while True:
@@ -38,10 +38,7 @@ def parse(Tokens):
                         break
                     if isinstance(Tokens[end_of_params + tmp], Keyword) and Tokens[end_of_params +tmp].keyword == "let":
                         if isinstance(Tokens[end_of_params + tmp + 1], Number):
-                            print("Error on line", line_number, "word count:", token_number + 2)
-                            print("Variable cannot be int")
-                            raise(SyntaxError)
-                            break
+                            raise SyntaxError(Tokens[end_of_params + tmp + 1].position, "Variable cannot be int")
                         node = VarNode(Tokens[token_number + 1], Tokens[token_number + 3], token_number, line_number)
                         code.append(node)
 
@@ -52,9 +49,8 @@ def parse(Tokens):
             print(code)
             node = FuncNode(nameof_func, params, code, token_number, line_number)
             ast["program"].append(node)
-        if isinstance(token, Keyword) and token.keyword == "let":
-            if (infunc):pass
-            else:
+        elif isinstance(token, Keyword) and token.keyword == "let":
+            if not infunc:
                 if isinstance(Tokens[token_number + 1], Number):
                     print("Error on line", line_number, "word count:", token_number + 2)
                     print("Variable cannot be int")
@@ -62,7 +58,7 @@ def parse(Tokens):
                     break
                 node = VarNode(Tokens[token_number + 1], Tokens[token_number + 3], token_number, line_number)
                 ast["program"].append([node])
-        if isinstance(token, Identifier) and token.ident == "out":
+        elif isinstance(token, Identifier) and token.ident == "out":
             node = OutNode(Tokens[token_number + 2], token_number, line_number)
         
         
