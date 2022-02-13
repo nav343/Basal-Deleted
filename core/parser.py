@@ -52,10 +52,7 @@ def parse(Tokens):
         elif isinstance(token, Keyword) and token.keyword == "let":
             if not infunc:
                 if isinstance(Tokens[token_number + 1], Number):
-                    print("Error on line", line_number, "word count:", token_number + 2)
-                    print("Variable cannot be int")
-                    raise SyntaxError("Invalid variable name on line " + str(line_number) + ", word " + str(token_number + 2))
-                    break
+                    raise SyntaxError(Tokens[token_number + 1].position, "Invalid variable name on line " + str(line_number) + ", word " + str(token_number + 2))
                 node = VarNode(Tokens[token_number + 1], Tokens[token_number + 3], token_number, line_number)
                 ast["program"].append([node])
         elif isinstance(token, Identifier) and token.ident == "out":
