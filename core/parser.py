@@ -9,7 +9,7 @@ def parse(Tokens):
     infunc = False
     for token in Tokens:
         # print(token)
-        if isinstance(token, Keyword) and token.keyword == "func":
+        if isinstance(Tokens[token_number], Keyword) and token.keyword == "func":
             infunc = True
             params = []
             nameof_func = Tokens[token_number + 1].ident
@@ -30,7 +30,6 @@ def parse(Tokens):
                     tmp += 1
             if isinstance(Tokens[token_number + end_of_params + 1], LCurly):
                 tmp = 2
-                print(Tokens[token_number + tmp], "asdas")
                 while True:
                     # print(tmp)
                     # print(Tokens[token_number + tmp].ident)
@@ -39,25 +38,26 @@ def parse(Tokens):
                     if isinstance(Tokens[end_of_params + tmp], Keyword) and Tokens[end_of_params +tmp].keyword == "let":
                         if isinstance(Tokens[end_of_params + tmp + 1], Number):
                             raise SyntaxError(Tokens[end_of_params + tmp + 1].position, "Variable cannot be int")
-                        node = VarNode(Tokens[token_number + 1], Tokens[token_number + 3], token_number, line_number)
+                        node = VarNode(Tokens[token_number + 1], Tokens[token_number + 3], token_number, Tokens[end_of_params + tmp].position.line)
                         code.append(node)
-
+                    elif isinstance(Tokens[end_of_params + tmp], Identifier) and Tokens[end_of_params + tmp].ident == "out":
+                        node = OutNode(Tokens[end_of_params + tmp + 2], token_number, Tokens[end_of_params + tmp].position.line)
+                        code.append(node)
                     
                     tmp += 1
-            print("_________________________________")
-
-            print(code)
             node = FuncNode(nameof_func, params, code, token_number, line_number)
             ast["program"].append(node)
-        elif isinstance(token, Keyword) and token.keyword == "let":
+        elif isinstance(Tokens[token_number], Keyword) and token.keyword == "let":
             if not infunc:
                 if isinstance(Tokens[token_number + 1], Number):
                     raise SyntaxError(Tokens[token_number + 1].position, "Invalid variable name on line " + str(line_number) + ", word " + str(token_number + 2))
-                node = VarNode(Tokens[token_number + 1], Tokens[token_number + 3], token_number, line_number)
-                ast["program"].append([node])
-        elif isinstance(token, Identifier) and token.ident == "out":
-            node = OutNode(Tokens[token_number + 2], token_number, line_number)
+                node = VarNode(Tokens[token_number + 1], Tokens[token_number + 3], token_number, Tokens[token_number].position.line)
+                ast["program"].append(node)
+        elif isinstance(Tokens[token_number], Identifier) and token.ident == "out":
+            if not infunc:
+                node = OutNode(Tokens[token_number + 2], token_number, Tokens[token_number].position.line)
+                ast["program"].append(node)
         
-        
+
         token_number += 1
     return ast

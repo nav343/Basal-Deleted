@@ -12,4 +12,4 @@ with open("file.txt", 'r') as file:
 tokens = lex(filedata, "file")
 print(tokens)
 ast = parse(tokens)
-print(ast["program"][0].code)
+print(ast["program"][0].code[0].content)

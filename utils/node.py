@@ -9,7 +9,9 @@ class VarNode(Node):
         self.name = name
 
 class OutNode(Node):
-    def __init__(self, content, token_number, line_number): pass
+    def __init__(self, content, token_number, line_number): 
+        self.content = content
+
         
 class FuncNode(Node):
     def __init__(self, name, parameters ,content, token_number, line_number):
