@@ -2,12 +2,13 @@
 The Lexer
 """
 
+from typing import Iterator
 from utils.peekable import Peekable
 from utils.token import *
 from utils.error import *
 
 
-def lex(contents: str, filename: str) -> list[Token]:
+def lex(chars: Peekable[tuple[int, str]], filename: str) -> Iterator[Token]:
     """
     Lexes the contents of a file.
     """
@@ -15,7 +16,6 @@ def lex(contents: str, filename: str) -> list[Token]:
     line = 1
     last_line = 0
     last = 0
-    chars = Peekable(enumerate(contents))
     while (char := next(chars, None)):
         (j, char) = char
         i = j - last_line + 1
@@ -60,8 +60,7 @@ def lex(contents: str, filename: str) -> list[Token]:
                         raise CharParseError(
                             Position(line, i, k+3, filename), f"Unclosed Char Literal")
                     case(_, '\''):
-                        tokens.append(
-                            Char(Position(line, i, k+3, filename), c))
+                        yield Char(Position(line, i, k+3, filename), c)
                     case(_, c):
                         raise CharParseError(
                             Position(line, i, k+3, filename), f"Expected ', found {c}")
@@ -69,44 +68,39 @@ def lex(contents: str, filename: str) -> list[Token]:
                 match chars.peek():
                     case(_, '='):
                         next(chars)
-                        tokens.append(PlusAssign(
-                            Position(line, i, i + 3, filename)))
+                        yield PlusAssign(Position(line, i, i + 3, filename))
                     case(_, '+'):
                         next(chars)
-                        tokens.append(
-                            Increment(Position(line, i, i + 3, filename)))
+                        yield Increment(Position(line, i, i + 3, filename))
                     case _:
-                        tokens.append(Plus(Position(line, i, i + 2, filename)))
+                        yield Plus(Position(line, i, i + 2, filename))
             case '&':
                 match chars.peek():
                     case(_, '='):
                         next(chars)
-                        tokens.append(
-                            AndAssign(Position(line, i, i + 3, filename)))
+                        yield AndAssign(Position(line, i, i + 3, filename))
                     case _:
-                        tokens.append(And(Position(line, i, i + 2, filename)))
+                        yield And(Position(line, i, i + 2, filename))
             case '|':
                 match chars.peek():
                     case(_, '='):
                         next(chars)
-                        tokens.append(
-                            OrAssign(Position(line, i, i + 3, filename)))
+                        yield OrAssign(Position(line, i, i + 3, filename))
                     case _:
-                        tokens.append(Or(Position(line, i, i + 2, filename)))
+                        yield Or(Position(line, i, i + 2, filename))
             case '^':
                 match chars.peek():
                     case(_, '='):
                         next(chars)
-                        tokens.append(
-                            XorAssign(Position(line, i, i + 3, filename)))
+                        yield XorAssign(Position(line, i, i + 3, filename))
                     case _:
-                        tokens.append(Xor(Position(line, i, i + 2, filename)))
+                        yield Xor(Position(line, i, i + 2, filename))
             case '/':
                 match chars.peek():
                     case(_, '='):
                         next(chars)
-                        tokens.append(DivideAssign(
-                            Position(line, i, i + 3, filename)))
+                        yield DivideAssign(
+                            Position(line, i, i + 3, filename))
                     case(_, '/'):
                         for i, c in chars:
                             if c == '\n':
@@ -127,113 +121,102 @@ def lex(contents: str, filename: str) -> list[Token]:
                             raise UnterminatedCommentError(
                                 Position(line, i, i + 1, filename))
                     case _:
-                        tokens.append(
-                            Divide(Position(line, i, i + 2, filename)))
+                        yield Divide(Position(line, i, i + 2, filename))
             case '*':
                 match chars.peek():
                     case(_, '='):
                         next(chars)
-                        tokens.append(MultiplyAssign(
-                            Position(line, i, i + 3, filename)))
+                        yield MultiplyAssign(
+                            Position(line, i, i + 3, filename))
                     case(_, '*'):
                         next(chars)
                         match chars.peek():
                             case(_, '='):
                                 next(chars)
-                                tokens.append(PowerAssign(
-                                    Position(line, i, i + 4, filename)))
+                                yield PowerAssign(
+                                    Position(line, i, i + 4, filename))
                             case _:
-                                tokens.append(
-                                    Power(Position(line, i, i + 3, filename)))
+                                yield Power(Position(line, i, i + 3, filename))
                     case _:
-                        tokens.append(
-                            Multiply(Position(line, i, i + 2, filename)))
+                        yield Multiply(Position(line, i, i + 2, filename))
             case '%':
                 match chars.peek():
                     case(_, '='):
                         next(chars)
-                        tokens.append(
-                            ModAssign(Position(line, i, i + 3, filename)))
+                        yield ModAssign(Position(line, i, i + 3, filename))
                     case _:
-                        tokens.append(Mod(Position(line, i, i + 2, filename)))
+                        yield Mod(Position(line, i, i + 2, filename))
             case '<':
                 match chars.peek():
                     case(_, '='):
                         next(chars)
-                        tokens.append(SmallerThanEqual(
-                            Position(line, i, i + 3, filename)))
+                        yield SmallerThanEqual(
+                            Position(line, i, i + 3, filename))
                     case _:
-                        tokens.append(SmallerThan(
-                            Position(line, i, i + 2, filename)))
+                        yield SmallerThan(
+                            Position(line, i, i + 2, filename))
             case '>':
                 match chars.peek():
                     case(_, '='):
                         next(chars)
-                        tokens.append(GreaterThanEqual(
-                            Position(line, i, i + 3, filename)))
+                        yield GreaterThanEqual(
+                            Position(line, i, i + 3, filename))
                     case _:
-                        tokens.append(GreaterThan(
-                            Position(line, i, i + 2, filename)))
+                        yield GreaterThan(
+                            Position(line, i, i + 2, filename))
             case '-':
                 match chars.peek():
                     case(_, '='):
                         next(chars)
-                        tokens.append(MinusAssign(
-                            Position(line, i, i + 3, filename)))
+                        yield MinusAssign(
+                            Position(line, i, i + 3, filename))
                     case(_, '>'):
                         next(chars)
-                        tokens.append(
-                            Arrow(Position(line, i, i + 3, filename)))
+                        yield Arrow(Position(line, i, i + 3, filename))
                     case(_, '-'):
                         next(chars)
-                        tokens.append(
-                            Decrement(Position(line, i, i + 3, filename)))
+                        yield Decrement(Position(line, i, i + 3, filename))
                     case _:
-                        tokens.append(
-                            Minus(Position(line, i, i + 2, filename)))
+                        yield Minus(Position(line, i, i + 2, filename))
             case '=':
                 match chars.peek():
                     case(_, '='):
                         next(chars)
-                        tokens.append(
-                            Equals(Position(line, i, i + 3, filename)))
+                        yield Equals(Position(line, i, i + 3, filename))
                     case(_, '>'):
                         next(chars)
-                        tokens.append(
-                            FatArrow(Position(line, i, i + 3, filename)))
+                        yield FatArrow(Position(line, i, i + 3, filename))
                     case _:
-                        tokens.append(
-                            Assign(Position(line, i, i + 2, filename)))
+                        yield Assign(Position(line, i, i + 2, filename))
             case '!':
                 match chars.peek():
                     case(_, '='):
                         next(chars)
-                        tokens.append(
-                            NotEqual(Position(line, i, i + 3, filename)))
+                        yield NotEqual(Position(line, i, i + 3, filename))
                     case _:
-                        tokens.append(Not(Position(line, i, i + 2, filename)))
+                        yield Not(Position(line, i, i + 2, filename))
             case ';':
-                tokens.append(SemiColon(Position(line, i, i + 2, filename)))
+                yield SemiColon(Position(line, i, i + 2, filename))
             case ',':
-                tokens.append(Comma(Position(line, i, i + 2, filename)))
+                yield Comma(Position(line, i, i + 2, filename))
             case ':':
-                tokens.append(Colon(Position(line, i, i + 2, filename)))
+                yield Colon(Position(line, i, i + 2, filename))
             case '[':
-                tokens.append(LSquare(Position(line, i, i + 2, filename)))
+                yield LSquare(Position(line, i, i + 2, filename))
             case ']':
-                tokens.append(RSquare(Position(line, i, i + 2, filename)))
+                yield RSquare(Position(line, i, i + 2, filename))
             case '(':
-                tokens.append(LParen(Position(line, i, i + 2, filename)))
+                yield LParen(Position(line, i, i + 2, filename))
             case ')':
-                tokens.append(RParen(Position(line, i, i + 2, filename)))
+                yield RParen(Position(line, i, i + 2, filename))
             case '{':
-                tokens.append(LCurly(Position(line, i, i + 2, filename)))
+                yield LCurly(Position(line, i, i + 2, filename))
             case '}':
-                tokens.append(RCurly(Position(line, i, i + 2, filename)))
+                yield RCurly(Position(line, i, i + 2, filename))
             case '?':
-                tokens.append(Question(Position(line, i, i + 2, filename)))
+                yield Question(Position(line, i, i + 2, filename))
             case '.':
-                tokens.append(Dot(Position(line, i, i + 2, filename)))
+                yield Dot(Position(line, i, i + 2, filename))
             case '"':
                 word = ""
                 start = i
@@ -271,8 +254,7 @@ def lex(contents: str, filename: str) -> list[Token]:
                     raise StringParseError(
                         Position(line, i, i + 1, filename), "Unclosed String Literal")
                 end -= last_line
-                tokens.append(
-                    String(Position(line, start, end, filename), word))
+                yield String(Position(line, start, end, filename), word)
             case number if number.isnumeric():
                 start = i
                 end = j + 2
@@ -293,11 +275,9 @@ def lex(contents: str, filename: str) -> list[Token]:
                     next(chars)
                 end -= last_line
                 if dot:
-                    tokens.append(
-                        Float(Position(line, start, end, filename), float(number)))
+                    yield Float(Position(line, start, end, filename), float(number))
                 else:
-                    tokens.append(
-                        Number(Position(line, start, end, filename), int(number)))
+                    yield Number(Position(line, start, end, filename), int(number))
             case word if word.isalpha() or word == '_':
                 start = i
                 end = j + 2
@@ -309,16 +289,14 @@ def lex(contents: str, filename: str) -> list[Token]:
                     next(chars)
                 end -= last_line
                 if word in KEYWORDS:
-                    tokens.append(
-                        Keyword(Position(line, start, end, filename), word))
+                    yield Keyword(Position(line, start, end, filename), word)
                 else:
-                    tokens.append(Identifier(
-                        Position(line, start, end, filename), word))
+                    yield Identifier(
+                        Position(line, start, end, filename), word)
             case c:
                 raise IllegalCharError(Position(line, i, i + 2, filename), c)
 
     if last >= last_line:
         last -= last_line
 
-    tokens.append(EOF(Position(line, last, last, filename)))
-    return tokens
+    yield EOF(Position(line, last, last, filename))

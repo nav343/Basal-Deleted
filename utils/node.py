@@ -1,18 +1,41 @@
-from abc import ABC
+from abc import ABC, abstractmethod
+from utils.type import Type
+from utils.error import Position
+from utils.token import Number
 
 
 class Node(ABC):
     __slots__ = ()
-
-class VarNode(Node):
-    def __init__(self, name, content, token_number, line_number):
-        self.name = name
-
-class OutNode(Node):
-    def __init__(self, content, token_number, line_number): pass
+    
+    @abstractmethod
+    def position(self) -> Position:
+        ...
         
-class FuncNode(Node):
-    def __init__(self, name, parameters ,content, token_number, line_number):
-        self.name = name
-        self.parameters = parameters
-        self.code = content
+    @abstractmethod
+    def type(self) -> Type:
+        ...
+
+class NumberNode(Node):
+    __slots__ = "number"
+
+    def __init__(self, number: Number):
+        self.number = number
+        
+    def position(self) -> Position:
+        return self.number.position
+    
+    def type(self) -> Type:
+        return Type.Number
+
+class StatementNode(Node):
+    __slots__ = "statements", "pos"
+
+    def __init__(self, statements: list[Node], pos: Position):
+        self.statements = statements
+        self.pos = pos
+        
+    def position(self) -> Position:
+        return self.pos
+    
+    def type(self) -> Type:
+        return Type.Null

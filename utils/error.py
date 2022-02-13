@@ -18,6 +18,11 @@ class Position:
         self.start = start
         self.end = end
         self.file = file
+        
+    def merged(self, end: "Position") -> "Position":
+        pos = Position(self.line, self.start, end.end, self.file)
+        pos.line_end = end.line_end
+        return pos
 
 
 class IllegalCharError(Error):
