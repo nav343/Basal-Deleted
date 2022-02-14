@@ -5,6 +5,7 @@ from utils.token import Token
 class Type(Enum):
     Number = auto()
     Null = auto()
+    Char = auto()
 
     def get_result_type(self, _other: "Type", _op: Token) -> "Type | None":
         return Type.Null
