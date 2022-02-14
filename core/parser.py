@@ -47,7 +47,7 @@ class Parser:
             node = self.comparision(scope)
             t = node.type().get_result_type_unary(token)
             if t is None:
-                raise TypeError(self.current().position, f"Expected a boolean, found {node.type()}")
+                raise TypeError(node.position(), f"Expected a boolean, found {node.type()}")
             return UnaryNode(token, node, t)
         return self.binary_op(scope, Parser.bitwise, Parser.bitwise, [Equals, NotEqual, GreaterThan, GreaterThanEqual, SmallerThan, SmallerThanEqual])
     
@@ -61,6 +61,22 @@ class Parser:
         return self.binary_op(scope, Parser.factor, Parser.factor, [Multiply, Divide, Mod])
 
     def factor(self, scope: Scope) -> Node:
+        token = self.current()
+        match token:
+            case Minus() | Plus() | Increment() | Decrement():
+                self.next()
+                node = self.factor(scope)
+                t = node.type().get_result_type_unary(token)
+                if t is None:
+                    raise TypeError(node.position(), f"Expected a number, found {node.type()}")
+                return UnaryNode(token, node, t)
+            case _:
+                return self.power(scope)
+
+    def power(self, scope: Scope) -> Node:
+        return self.binary_op(scope, Parser.atom, Parser.atom, [Power])
+
+    def atom(self, scope: Scope) -> Node:
         match self.current():
             case Number(_):
                 node = NumberNode(self.current())
@@ -99,7 +115,7 @@ class Parser:
             right_ = right(self, scope)
             t = left_.type().get_result_type(right_.type(), token)
             if t is None:
-                raise TypeError(self.current().position, f"Cannot apply operator {token} to types {left_.type()} and {right_.type()}")
+                raise TypeError(right_.position(), f"Cannot apply operator {token} to types {left_.type()} and {right_.type()}")
             left_ = BinaryNode(token, left_, right_, Type.Null)
             token = self.current()
         return left_
