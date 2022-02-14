@@ -82,6 +82,10 @@ class Parser:
                 node = NumberNode(self.current())
                 self.next()
                 return node
+            case Char(_):
+                node = CharNode(self.current())
+                self.next()
+                return node
             case Identifier(_):
                 match scope.get_variable(self.current()):
                     case None:
