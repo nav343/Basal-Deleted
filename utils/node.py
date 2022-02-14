@@ -19,7 +19,6 @@ class Node(ABC):
     def __repr__(self) -> str:
         ...
 
-
 class NumberNode(Node):
     __slots__ = "number"
     __match_args__ = ("number",)
@@ -35,7 +34,6 @@ class NumberNode(Node):
     
     def __repr__(self) -> str:
         return f"NumberNode({self.number})"
-
 
 class StatementNode(Node):
     __slots__ = "statements", "pos"
@@ -54,7 +52,6 @@ class StatementNode(Node):
     def __repr__(self) -> str:
         return f"StatementNode({self.statements})"
 
-
 class VarAssignNode(Node):
     __slots__ = "name", "node", "pos"
     __match_args__ = ("name", "node")
@@ -72,7 +69,6 @@ class VarAssignNode(Node):
     
     def __repr__(self) -> str:
         return f"VarAssignNode({self.name} = {self.node})"
-
 
 class VarAcessNode(Node):
     __slots__ = "name", "type_"
@@ -127,3 +123,98 @@ class UnaryNode(Node):
 
     def __repr__(self) -> str:
         return f"UnaryNode({self.op} {self.expr})"
+
+class CallNode(Node):
+    __slots__ = "function", "arguments", "type_", "pos"
+    __match_args__ = ("function", "arguments")
+
+    def __init__(self, function: Identifier, arguments: list[Node], type_ : Type, pos: Position):
+        self.function = function
+        self.arguments = arguments
+        self.pos = pos
+        self.type_ = type_
+
+    def position(self) -> Position:
+        return self.pos
+
+    def type(self) -> Type:
+        return self.type_
+
+    def __repr__(self) -> str:
+        return f"CallNode({self.function}({self.arguments}))"
+
+class FunctionNode(Node):
+    __slots__ = "name", "type_", "parameters", "body", "pos"
+    __match_args__ = ("name", "body")
+
+    def __init__(self, name: Identifier, parameters: list[Type], body: Node, type_ : Type, pos: Position):
+        self.name = name
+        self.parameters = parameters
+        self.type_ = type_
+        self.body = body
+        self.pos = pos
+
+    def position(self) -> Position:
+        return self.pos
+
+    def type(self) -> Type:
+        return self.type_
+
+    def __repr__(self) -> str:
+        return f"FunctionNode({self.name}({self.parameters}) -> {self.type_} : {self.body})"
+
+class IfNode(Node):
+    __slots__ = "condition", "then", "else_", "pos"
+    __match_args__ = ("condition", "then", "else_")
+
+    def __init__(self, condition: Node, then: Node, else_: Node | None, pos: Position):
+        self.condition = condition
+        self.else_ = else_
+        self.then = then
+        self.pos = pos
+
+    def position(self) -> Position:
+        return self.pos
+
+    def type(self) -> Type:
+        return Type.Null
+
+    def __repr__(self) -> str:
+        return f"IfNode({self.condition} ? {self.then} : {self.else_})"
+
+class WhileNode(Node):
+    __slots__ = "condition", "body", "pos"
+    __match_args__ = ("condition", "body")
+
+    def __init__(self, condition: Node, body: Node, pos: Position):
+        self.condition = condition
+        self.body = body
+        self.pos = pos
+
+    def position(self) -> Position:
+        return self.pos
+
+    def type(self) -> Type:
+        return Type.Null
+
+    def __repr__(self) -> str:
+        return f"IfNode({self.condition} : {self.body})"
+
+class ForNode(Node):
+    __slots__ = "i", "iterator", "body", "pos"
+    __match_args__ = ("i", "iterator", "body")
+
+    def __init__(self, i: Identifier, iterator: Node, body: Node, pos: Position):
+        self.i = i
+        self.iterator = iterator
+        self.body = body
+        self.pos = pos
+
+    def position(self) -> Position:
+        return self.pos
+
+    def type(self) -> Type:
+        return Type.Null
+
+    def __repr__(self) -> str:
+        return f"ForNode({self.i} : {self.iterator} -> {self.body})"
