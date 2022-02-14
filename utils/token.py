@@ -28,6 +28,7 @@ class Token(ABC):
 
 class Identifier(Token):
     __slots__ = "ident"
+    __match_args__ = ("ident",)
 
     @position
     def __init__(self, ident: str):
@@ -68,6 +69,7 @@ class SemiColon(Token):
 
 class Number(Token):
     __slots__ = "number"
+    __match_args__ = ("number",)
     
     @position
     def __init__(self, number: int):
@@ -88,6 +90,7 @@ class Float(Token):
 
 class Keyword(Token):
     __slots__ = "keyword"
+    __match_args__ = ("keyword",)
    
     @position
     def __init__(self, keyword: str):
@@ -284,6 +287,7 @@ class LCurly(Token):
 
 class Char(Token):
     __slots__ = "char"
+    __match_args__ = ("char",)
     
     @position
     def __init__(self, char: str):
@@ -318,6 +322,7 @@ class FatArrow(Token):
 
 class String(Token):
     __slots__ = "string"
+    __match_args__ = ("string",)
 
     @position
     def __init__(self, string: str):

@@ -13,4 +13,4 @@ with open("file.txt", 'r') as file:
 tokens = Peekable(lex(filedata, "file"))
 print(tokens)
 ast = parse(tokens)
-print(ast["program"][0].code[0].content)
+print(ast)
