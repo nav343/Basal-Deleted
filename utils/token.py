@@ -35,7 +35,7 @@ class Identifier(Token):
         self.ident = ident
         
     def __repr__(self) -> str:
-        return f"Identifier: '{self.ident}'"
+        return f"'{self.ident}'"
 
 class Plus(Token): 
     __slots__ = ()
@@ -76,7 +76,7 @@ class Number(Token):
         self.number = number
         
     def __repr__(self) -> str:
-        return f"Number: {self.number}"
+        return f"{self.number}"
 
 class Float(Token):
     __slots__ = "float"
@@ -86,7 +86,7 @@ class Float(Token):
         self.float = number
         
     def __repr__(self) -> str:
-        return f"Float: {self.float}"
+        return f"{self.float}"
 
 class Keyword(Token):
     __slots__ = "keyword"
@@ -97,7 +97,7 @@ class Keyword(Token):
         self.keyword = keyword
 
     def __repr__(self) -> str:
-        return f"Keyword: '{self.keyword}'"
+        return f"'{self.keyword}'"
 
 class EOF(Token):
     __slots__ = ()
@@ -110,7 +110,19 @@ class GreaterThan(Token):
 
     def __repr__(self) -> str:
         return ">"
-        
+
+class ShiftRight(Token):
+    __slots__ = ()
+
+    def __repr__(self) -> str:
+        return ">>"
+
+class ShiftLeft(Token):
+    __slots__ = ()
+
+    def __repr__(self) -> str:
+        return "<<"
+     
 class SmallerThan(Token):
     __slots__ = ()
 
@@ -294,7 +306,7 @@ class Char(Token):
         self.char = char
     
     def __repr__(self) -> str:
-        return f"Char: '{self.char!r}'"
+        return f"'{self.char!r}'"
 
 class Question(Token):
     __slots__ = ()

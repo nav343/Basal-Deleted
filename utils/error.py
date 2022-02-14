@@ -5,6 +5,10 @@ from .token import position
 class Error(Exception, ABC):
     __slots__ = "position", "details"
 
+    @position
+    def __init__(self, details: str):
+        self.details = details
+
     def __str__(self) -> str:
         return f"{self.__class__.__name__} in {self.position.file} at {self.position.line}:{self.position.start} to {self.position.line_end}:{self.position.end} :: {self.details}"
 
@@ -50,17 +54,18 @@ class UnterminatedCommentError(Error):
 
 
 class CharParseError(Error):
-    @position
-    def __init__(self, details: str):
-        self.details = details
+    __slots__ = ()
 
 
 class StringParseError(Error):
-    @position
-    def __init__(self, details: str):
-        self.details = details
+    __slots__ = ()
 
 class SyntaxError(Error):
-    @position
-    def __init__(self, details: str):
-        self.details = details
+    __slots__ = ()
+
+class UndefinedVariableError(Error):
+    __slots__ = ()
+
+
+class TypeError(Error):
+    __slots__ = ()

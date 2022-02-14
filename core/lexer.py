@@ -152,6 +152,10 @@ def lex(chars: Peekable[tuple[int, str]], filename: str) -> Iterator[Token]:
                         next(chars)
                         yield SmallerThanEqual(
                             Position(line, i, i + 3, filename))
+                    case(_, '<'):
+                        next(chars)
+                        yield ShiftLeft(
+                            Position(line, i, i + 3, filename))
                     case _:
                         yield SmallerThan(
                             Position(line, i, i + 2, filename))
@@ -160,6 +164,10 @@ def lex(chars: Peekable[tuple[int, str]], filename: str) -> Iterator[Token]:
                     case(_, '='):
                         next(chars)
                         yield GreaterThanEqual(
+                            Position(line, i, i + 3, filename))
+                    case(_, '>'):
+                        next(chars)
+                        yield ShiftRight(
                             Position(line, i, i + 3, filename))
                     case _:
                         yield GreaterThan(
