@@ -1,5 +1,5 @@
 from abc import ABC
-from .token import position
+from utils.token import position
 
 
 class Error(Exception, ABC):
