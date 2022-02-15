@@ -97,7 +97,6 @@ class Parser:
         if type(self.current()) != LCurly:
             raise SyntaxError(self.current().position, f"Expected '{{', got {self.current()}")
         self.next()
-        print("FFF", self.current())
         body2 = self.statemtents(scope, RCurly)
         self.next()
         return IfNode(condition, body, body2, pos.merged(body2.position()))

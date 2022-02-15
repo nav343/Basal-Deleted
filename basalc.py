@@ -3,7 +3,7 @@ The main file
 """
 
 from core.lexer import lex
-from Basal.core.parser import parse
+from core.parser import parse
 from utils.peekable import Peekable
 
 
