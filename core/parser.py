@@ -22,10 +22,10 @@ class Parser:
     def current(self) -> Token | None:
         return self.tokens.current()
 
-    def statemtents(self, scope: Scope) -> Node:
+    def statemtents(self, scope: Scope, end_token: type) -> StatementNode:
         statements = []
         start: Position = self.current().position
-        while type(self.current()) != EOF:
+        while type(self.current()) != end_token:
             statements.append(self.statement(scope))
         self.next()
         return StatementNode(statements, start.merged(self.current().position))
@@ -34,8 +34,43 @@ class Parser:
         match self.current():
             case Keyword(keyword = "let"):
                 return self.define(scope)
+            case Keyword(keyword = "if"):
+                return self.if_(scope)
             case _:
                 return self.expression(scope)
+            
+    def if_(self, scope: Scope) -> Node:
+        pos: Position = self.current().position
+        self.next()
+        condition = self.expression(scope)
+        if type(self.current()) != LCurly:
+            raise SyntaxError(self.current().position, f"Expected '{{', got {self.current()}")
+        self.next()
+        body = self.statemtents(scope, RCurly)
+        match self.current():
+            case Keyword(keyword = "else"):
+                pass
+            case _:
+                return IfNode(condition, body, None, pos.merged(body.position()))
+        while isinstance(self.next(), Keyword) and self.current().keyword == "if":
+            self.next()
+            condition = self.expression(scope)
+            if type(self.current()) != LCurly:
+                raise SyntaxError(self.current().position, f"Expected '{{', got {self.current()}")
+            self.next()
+            body = IfNode(condition, body, self.statemtents(scope, RCurly), pos.merged(body.position()))
+            match self.current():
+                case Keyword(keyword = "else"):
+                    pass
+                case _:
+                    return IfNode(condition, body, None, pos.merged(body.position()))
+        if type(self.current()) != LCurly:
+            raise SyntaxError(self.current().position, f"Expected '{{', got {self.current()}")
+        self.next()
+        print("FFF", self.current())
+        body2 = self.statemtents(scope, RCurly)
+        self.next()
+        return IfNode(condition, body, body2, pos.merged(body2.position()))
     
     def expression(self, scope: Scope) -> Node:
         return self.comparision(scope)
@@ -86,6 +121,10 @@ class Parser:
                 node = CharNode(self.current())
                 self.next()
                 return node
+            case String(_):
+                node = StringNode(self.current())
+                self.next()
+                return node
             case Identifier(_):
                 match scope.get_variable(self.current()):
                     case None:
@@ -125,7 +164,7 @@ class Parser:
         return left_
 
 
-def parse(tokens: Peekable[Token]) -> None:
+def parse(tokens: Peekable[Token]) -> StatementNode:
     parser = Parser(tokens)
     parser.next()
-    return parser.statemtents(Scope())
+    return parser.statemtents(Scope(), EOF)

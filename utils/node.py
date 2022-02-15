@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from utils.type import Type
 from utils.error import Position
-from utils.token import Char, Identifier, Number, Token
+from utils.token import *
 
 
 class Node(ABC):
@@ -221,7 +221,7 @@ class ForNode(Node):
 
 class CharNode(Node):
     __slots__ = "char"
-    __match_args__ = ("i", "iterator", "body")
+    __match_args__ = ("char", )
 
     def __init__(self, char: Char):
         self.char = char
@@ -234,3 +234,19 @@ class CharNode(Node):
 
     def __repr__(self) -> str:
         return f"CharNode({self.char})"
+
+class StringNode(Node):
+    __slots__ = "string"
+    __match_args__ = ("string",)
+
+    def __init__(self, string: String):
+        self.string = string
+
+    def position(self) -> Position:
+        return self.string.position
+
+    def type(self) -> Type:
+        return Type.Char
+
+    def __repr__(self) -> str:
+        return f"StringNode({self.string})"
