@@ -198,7 +198,7 @@ class WhileNode(Node):
         return Type.Null
 
     def __repr__(self) -> str:
-        return f"IfNode({self.condition} : {self.body})"
+        return f"WhileNode({self.condition} : {self.body})"
 
 class ForNode(Node):
     __slots__ = "i", "iterator", "body", "pos"

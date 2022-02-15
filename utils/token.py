@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from error import Position
 
-KEYWORDS = ("let", "if", "while", "for", "else", "func", "return", "int8", "uint8", "int16", "uint16", "int32", "uint32", "float32", "float64", "char", "null")
+KEYWORDS = ("let", "if", "while", "for", "else", "func", "return", "int8", "uint8", "int16", "uint16", "int32", "uint32", "float32", "float64", "char", "null", "in")
 
 def position(function):
     def new(self, position : Position, *args, **kwargs):

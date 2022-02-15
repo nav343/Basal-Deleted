@@ -29,15 +29,45 @@ class Parser:
             statements.append(self.statement(scope))
         self.next()
         return StatementNode(statements, start.merged(self.current().position))
-            
+
     def statement(self, scope: Scope) -> Node:
         match self.current():
             case Keyword(keyword = "let"):
                 return self.define(scope)
             case Keyword(keyword = "if"):
                 return self.if_(scope)
+            case Keyword(keyword = "while"):
+                return self.while_(scope)
+            case Keyword(keyword = "for"):
+                return self.for_(scope)
             case _:
                 return self.expression(scope)
+    
+    def while_(self, scope: Scope) -> Node:
+        pos: Position = self.current().position
+        self.next()
+        condition = self.expression(scope)
+        if type(self.current()) != LCurly:
+            raise SyntaxError(self.current().position, f"Expected '{{', got {self.current()}")
+        self.next()
+        body = self.statemtents(scope, RCurly)
+        return WhileNode(condition, body, pos.merged(body.position()))
+
+    def for_(self, scope: Scope) -> Node:
+        pos: Position = self.current().position
+        self.next()
+        if type(self.current()) != Identifier:
+            raise SyntaxError(self.current().position, f"Expected identifier, got {self.current()}")
+        i = self.current()
+        if not (isinstance(self.next(), Keyword) and self.current().keyword == "in"):
+            raise SyntaxError(self.current().position, f"Expected 'in', got {self.current()}")
+        self.next()
+        iterator = self.expression(scope)
+        if type(self.current()) != LCurly:
+            raise SyntaxError(self.current().position, f"Expected '{{', got {self.current()}")
+        self.next()
+        body = self.statemtents(scope, RCurly)
+        return ForNode(i, iterator, body, pos.merged(body.position()))
             
     def if_(self, scope: Scope) -> Node:
         pos: Position = self.current().position
