@@ -12,7 +12,6 @@ def lex(chars: Peekable[tuple[int, str]], filename: str) -> Iterator[Token]:
     """
     Lexes the contents of a file.
     """
-    tokens = []
     line = 1
     last_line = 0
     last = 0

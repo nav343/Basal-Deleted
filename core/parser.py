@@ -146,6 +146,10 @@ class Parser:
                 node = NumberNode(self.current())
                 self.next()
                 return node
+            case Float(_):
+                node = FloatNode(self.current())
+                self.next()
+                return node
             case Char(_):
                 node = CharNode(self.current())
                 self.next()

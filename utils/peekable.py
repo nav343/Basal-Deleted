@@ -20,6 +20,11 @@ class Peekable(Generic[T]):
         self.next = next(self.iterator, None)
         return self.just
 
+    def __copy__(self) -> "Peekable[T]":
+        result = self.__class__(self.iterator)
+        result.just = self.just
+        return result
+
     def peek(self):
         return self.next
     

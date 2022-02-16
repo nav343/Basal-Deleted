@@ -35,6 +35,22 @@ class NumberNode(Node):
     def __repr__(self) -> str:
         return f"NumberNode({self.number})"
 
+class FloatNode(Node):
+    __slots__ = "float"
+    __match_args__ = ("float",)
+
+    def __init__(self, float: Float):
+        self.float = float
+        
+    def position(self) -> Position:
+        return self.float.position
+    
+    def type(self) -> Type:
+        return Type.Float
+    
+    def __repr__(self) -> str:
+        return f"FloatNode({self.float})"
+
 class StatementNode(Node):
     __slots__ = "statements", "pos"
     __match_args__ = ("statements",)

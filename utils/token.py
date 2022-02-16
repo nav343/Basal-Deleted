@@ -80,7 +80,8 @@ class Number(Token):
 
 class Float(Token):
     __slots__ = "float"
-    
+    __match_args__ = ("float",)
+ 
     @position
     def __init__(self, number: int):
         self.float = number

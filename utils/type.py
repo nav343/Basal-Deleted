@@ -6,6 +6,7 @@ class Type(Enum):
     Number = auto()
     Null = auto()
     Char = auto()
+    Float = auto()
 
     def get_result_type(self, _other: "Type", _op: Token) -> "Type | None":
         return Type.Null
@@ -18,4 +19,8 @@ class Type(Enum):
             case Type.Null:
                 return "Null"
             case Type.Number:
-                return "int"      
+                return "int"
+            case Type.Number:
+                return "Char"
+            case Type.Float:
+                return "Float"   
